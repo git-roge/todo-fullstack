@@ -1,0 +1,12 @@
+{
+    "cSpell.words": [
+        "asgiref",
+        "corsheaders",
+        "djangorestframework",
+        "pycache",
+        "sqlparse",
+        "tzdata",
+        "venv",
+        "viewsets"
+    ]
+}

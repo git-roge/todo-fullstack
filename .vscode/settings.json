@@ -4,7 +4,9 @@
         "corsheaders",
         "djangorestframework",
         "pycache",
+        "simplejwt",
         "sqlparse",
+        "Topbar",
         "tzdata",
         "venv",
         "viewsets"

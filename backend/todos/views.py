@@ -1,16 +1,24 @@
-from django.shortcuts import render
 from rest_framework import viewsets
 from .models import Todo
 from .serializers import TodoSerializer, TodoTitleListSerializer, TodoDescriptionListSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework import status
 from .pagination import TodoPagination
-
-# Create your views here.
+from .permissions import IsAdminOrWorkerNoDelete
 class TodoViewSet(viewsets.ModelViewSet):
     queryset = Todo.objects.all().order_by('-created_at')
     serializer_class = TodoSerializer
     pagination_class = TodoPagination
+    permission_classes = [IsAdminOrWorkerNoDelete]  # ✅ clean
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {"message": "Todo deleted successfully"},
+            status=status.HTTP_200_OK
+        )
 
     @action(detail=False, methods=['get'])
     def titles(self, request):

@@ -11,6 +11,6 @@ class IsAdminOrWorkerNoDelete(BasePermission):
             return True
         
         if user.role == 'worker':
-            return view.action != "destroy"
+            return getattr(view, "action", None) != "destroy"
         
         return False

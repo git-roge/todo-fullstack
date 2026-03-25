@@ -21,18 +21,16 @@ function Login(){
         try{
             const data = await handleLogin(userName, password);
             
-        
-            
             if(data){
                 localStorage.setItem("access", data.access);
                 localStorage.setItem("refresh", data.refresh);
-
+                
                 const user = await getCurrentUser();
 
                 if(user.is_active){
                     localStorage.setItem("username", user.username);
-                localStorage.setItem("role", user.role);
-                
+                    localStorage.setItem("role", user.role);
+                    localStorage.setItem("id", user.id)
 
                 navigate("/", {replace: true});
                 }

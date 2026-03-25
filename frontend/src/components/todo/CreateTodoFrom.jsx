@@ -27,6 +27,7 @@ export default function CreateTodoForm({addTodo}) {
       setDescription("");
       setError("");
     }catch(err){
+      console.log(err)
       setError(err)
     }
   };
@@ -57,7 +58,7 @@ export default function CreateTodoForm({addTodo}) {
   return (
     <div className="bg-gray-100 rounded p-4">
       {todoAdded && <p className="text-green-500 bg-green-100 rounded text-center font-semibold py-1">{todoAdded}</p>}
-      {error.general && <p className="text-red-600 bg-red-100 rounded text-center font-semibold py-1">{error.general}</p>}
+      {error.generalError && <p className="text-red-600 bg-red-100 rounded text-center font-semibold py-1">{error.generalError}</p>}
       <form onSubmit={handleSubmit}>
         <div className="">
           <div className="w-full flex flex-col lg:flex-row gap-2 p-2">
@@ -79,7 +80,6 @@ export default function CreateTodoForm({addTodo}) {
             <label className="font-semibold w-30 px-2 py-1 rounded">
               Title
             </label>
-
             <input
               type="text"
               placeholder="title..."
@@ -88,6 +88,7 @@ export default function CreateTodoForm({addTodo}) {
               onChange={(e) => setTitle(e.target.value)}
             />
           </div>
+          {error.title_error && <p className="text-red-600 bg-red-100 w-full pl-4 rounded">{error.title_error}</p>}
           <div>
             {error.title && <p className="text-red-500">{error.title[0]}</p>}
           </div>
@@ -109,6 +110,7 @@ export default function CreateTodoForm({addTodo}) {
               type="submit" 
               className="bg-blue-400 w-20 rounded text-white ring-1 ring-blue-300 hover:bg-blue-500">Submit</button>
             <button 
+              disabled={!users}
               type="button"
               onClick={() => {
                 setTitle("");

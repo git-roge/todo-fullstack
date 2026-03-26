@@ -21,9 +21,24 @@ class TodoViewSet(viewsets.ModelViewSet):
             return Todo.objects.none()
         
         if user.role == 'worker':
-            return super().get_queryset().filter(user=user)
+            self.queryset = super().get_queryset().filter(user=user)
         else:
-            return super().get_queryset()
+            self.queryset = super().get_queryset()
+        
+        search = self.request.query_params.get('search')
+        field = self.request.query_params.get('field')
+
+        if search and field:
+            if field == 'title':
+                self.queryset = self.queryset.filter(title__icontains=search)
+            elif field == 'description':
+                self.queryset = self.queryset.filter(description__icontains=search)
+            elif field == 'user':
+                self.queryset = self.queryset.annotate(
+                    full_name = concat('user__first_name', value(' '), 'user__last_name')
+                ).filter(full_name__icontains=search)
+        
+        return self.queryset
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

@@ -14,9 +14,15 @@ const handleError = (error) => {
         return {generalError: error.message || "Something lang."};
     }
 }
-export const getTodos = async (page) => {
+export const getTodos = async (page, search=null, field=null) => {
     try{
-        const response = await todos.get(`/todos/?page=${page}`);
+        const response = await todos.get('/todos/', {
+            params: {
+                page: page,
+                ...(search && { search }),
+                ...(field && { field }),
+            }
+        });
         return response.data;
     }catch(err) {
         return handleError(err);

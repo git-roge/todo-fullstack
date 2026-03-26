@@ -1,13 +1,13 @@
 export default function EditUser({selectedUser, onClose, onSave}){
     return(
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
-            <div className="bg-gray-100 w-1/3 py-4 px-10 rounded-md">
+            <div className="bg-gray-100 w-1/3 pt-4 pb-10 px-10 rounded-md">
                 <button 
                     onClick={onClose}
                     className="text-3xl text-end w-full cursor-pointer">
                         &times;
                 </button>
-                <h1 className="text-center font-semibold text-4xl pb-10 pt-5">User Profile</h1>
+                <h1 className="text-center font-semibold text-4xl pb-10">User Profile</h1>
                 <hr className="py-2"/>
                 <div className="flex gap-4">
                     <p className="font-semibold text-lg w-30">First Name:</p>

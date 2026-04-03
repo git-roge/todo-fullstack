@@ -25,13 +25,13 @@ function App() {
           <Route
             path="/create"
             element={
-              <ProtectedRoute allowedRoutes={["admin"]}>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <CreateTodoForm/>
               </ProtectedRoute>}/>
           <Route
             path='/usersList'
             element={
-              <ProtectedRoute allowedRoutes={["admin"]}>
+              <ProtectedRoute allowedRoles={["admin"]}>
                 <UsersList/>
               </ProtectedRoute>}/>
         </Route>

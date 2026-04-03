@@ -1,19 +1,21 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Sidebar from "../components/navigation/Sidebar";
 import Topbar from "../components/navigation/Topbar";
 
 import { Outlet, useNavigate } from "react-router-dom";
+import { AuthContext } from "../auth/AuthProvider";
 
 export default function Layout() {
   const [collapsed, setCollapsed] = useState(false);
-
-  const navigate = useNavigate()
-
+  const navigate = useNavigate();
+  const {isAuthReady, isLoggedIn} = useContext(AuthContext);
+  
   useEffect(() => {
-    if(!localStorage.getItem("access")){
-      navigate("/login");
+
+    if(isAuthReady && !isLoggedIn){
+      navigate("/login", {replace: true});
     }
-  }, []);
+  }, [isAuthReady, isLoggedIn], navigate);
 
   return (
     <div className="flex h-screen">

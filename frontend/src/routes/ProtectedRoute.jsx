@@ -1,15 +1,26 @@
+import { useContext } from "react";
 import { Navigate } from "react-router-dom";
+import { AuthContext } from "../auth/AuthProvider";
+import { getAccessToken } from "../auth/tokenStore";
+import { jwtDecode } from "jwt-decode";
 
-function ProtectedRoute({children, allowedRoutes}) {
-    const access = localStorage.getItem("access");
-    const role = localStorage.getItem("role")
+function ProtectedRoute({ children, allowedRoles }) {
+    const { isLoggedIn, isAuthReady } = useContext(AuthContext);
+    const token = getAccessToken();
+    const decode = jwtDecode(token);
+    const role = decode.role;
 
-    if(!access) {
-        return <Navigate to="/login" replace />;
+    // WAIT for auth check to finish
+    if (!isAuthReady) {
+        return <div>Loading...</div>; // or null / spinner
     }
     
-    if(allowedRoutes && !allowedRoutes.includes(role)) {
-        return <Navigate to="/" replace/>;
+    if (!isLoggedIn) {
+        return <Navigate to="/login" replace />;
+    }
+
+    if (allowedRoles && !allowedRoles.includes(role)) {
+        return <Navigate to="/" replace />;
     }
 
     return children;

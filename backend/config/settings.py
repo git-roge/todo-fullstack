@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     
     'users',
@@ -53,10 +54,12 @@ REST_FRAMEWORK = {
     ),
 }
 
-#SIMPLE_JWT = {
-#    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=5),
-#    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=5),
-#}
+SIMPLE_JWT = {
+    #"ACCESS_TOKEN_LIFETIME": timedelta(seconds=5),
+    #"REFRESH_TOKEN_LIFETIME": timedelta(seconds=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -138,6 +141,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 AUTH_USER_MODEL = 'users.User'
+
+CSRF_TRUSTED_ORIGINS = ["http://localhost:5173"]

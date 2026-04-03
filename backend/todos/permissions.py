@@ -11,6 +11,11 @@ class IsAdminOrWorkerNoDelete(BasePermission):
             return True
         
         if user.role == 'worker':
-            return getattr(view, "action", None) != "destroy"
+            if request.method in SAFE_METHODS:
+                return True
+            if request.method in ["PUT", "PATCH"]:
+                return True
+            if request.method in ["POST", "DELETE"]:
+                return False
         
         return False

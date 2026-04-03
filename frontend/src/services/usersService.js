@@ -1,6 +1,5 @@
 import users from "../api/users"
-
-const token = localStorage.getItem("access");
+import { getAccessToken } from "../auth/tokenStore";
 
 export const handleError = (error) => {
     if(error.response){
@@ -35,8 +34,6 @@ export const handleLogin = async (username, password) => {
 
 export const getCurrentUser = async () => {
     try{
-        const token = localStorage.getItem("access");
-
         const response = await users.get("/users/me/");
         
         return response.data;
@@ -47,7 +44,6 @@ export const getCurrentUser = async () => {
 
 export const getUsers = async () => {
     try{
-        const token = localStorage.getItem("access");
         
         const response = await users.get("/users/");
 

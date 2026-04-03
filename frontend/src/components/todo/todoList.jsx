@@ -3,6 +3,8 @@ import { deleteTodo, getTodos, updateTodo } from "../../services/todoService";
 import {formatDate} from "../../utils/formatDate.js";
 import EditTodoModal from "./EditModal.jsx";
 import useDebounce from "../../hooks/useDebounce.js";
+import { getAccessToken } from "../../auth/tokenStore.js";
+import { jwtDecode } from "jwt-decode";
 
 export function TodoList() {
   const [todos, setTodos] = useState([]);
@@ -20,7 +22,9 @@ export function TodoList() {
   const [appliedSearch, setAppliedSearch] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const role = localStorage.getItem("role");
+  const token = getAccessToken();
+  const decode = jwtDecode(token);
+  const role = decode.role;
   const id = localStorage.getItem("id");
 
   const searchFields = [
@@ -70,7 +74,16 @@ export function TodoList() {
             seen.add(todo.title)
             return true;
           })
-          console.log()
+          
+          setResults(uniqueResults);
+        }else if(field === "description"){
+          const uniqueResults = data.results.filter(todo => {
+            if(seen.has(todo.description)) return false;
+
+            seen.add(todo.title)
+            return true;
+          })
+
           setResults(uniqueResults);
         }
       }catch(err){

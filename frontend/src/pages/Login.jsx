@@ -1,19 +1,22 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import {useNavigate} from "react-router-dom";
 import { getCurrentUser, handleLogin } from "../services/usersService";
+import { setAccessToken } from "../auth/tokenStore";
+import { AuthContext } from "../auth/AuthProvider";
 
-function Login(){
+export function Login(){
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
     const navigate = useNavigate();
+    const {setIsLoggedIn, isLoggedIn, isAuthReady} = useContext(AuthContext);
 
     useEffect(() => {
-        if(localStorage.getItem("access")){
-            navigate("/");
+        if(isAuthReady && isLoggedIn){
+            navigate("/", {replace: true});
         }
-    },[])
+    },[isAuthReady, isLoggedIn, navigate])
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -21,20 +24,15 @@ function Login(){
         try{
             const data = await handleLogin(userName, password);
             
-            if(data){
-                localStorage.setItem("access", data.access);
-                localStorage.setItem("refresh", data.refresh);
+            if(data?.access){
+                setAccessToken(data.access);
+                setIsLoggedIn(true);
                 
                 const user = await getCurrentUser();
-
                 if(user.is_active){
-                    localStorage.setItem("username", user.username);
-                    localStorage.setItem("role", user.role);
-                    localStorage.setItem("id", user.id)
-
-                navigate("/", {replace: true});
+                    navigate("/", {replace: true});
                 }
-                
+               
             }
         }catch(err){
             setError(err.message)

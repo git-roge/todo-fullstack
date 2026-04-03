@@ -1,8 +1,10 @@
 import axios from "axios";
 import users from "./users";
+import { getAccessToken, setAccessToken } from "../auth/tokenStore";
 
 const todos = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
+    withCredentials: true,
     timeout: 10000,
     headers: {
         "Content-Type": "application/json",
@@ -11,7 +13,7 @@ const todos = axios.create({
 
 todos.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("access")
+        const token = getAccessToken();
 
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
@@ -36,19 +38,13 @@ todos.interceptors.response.use(
             originalRequest._retry = true;
 
             try{
-                const refresh = localStorage.getItem("refresh");
 
-                if(!refresh){
-                    throw new Error("No refresh token");
-                }
-
-                const res = await users.post("/token/refresh/", {
-                    refresh: refresh,
+                const res = await users.post("/token/refresh/", {}, {
+                    withCredentials: true
                 });
-
                 const newAccess = res.data.access;
 
-                localStorage.setItem("access", newAccess);
+                setAccessToken(newAccess);
 
                 originalRequest.headers.Authorization = `Bearer ${newAccess}`;
                 return todos(originalRequest);
@@ -61,10 +57,11 @@ todos.interceptors.response.use(
 
                     window.location.href = "/login";
                 }
+                
                 return Promise.reject(refreshError);
             }
         }
-
+       
         return Promise.reject(error);
     }
 )

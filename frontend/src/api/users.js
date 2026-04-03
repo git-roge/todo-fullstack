@@ -1,7 +1,9 @@
 import axios from "axios";
+import { getAccessToken, setAccessToken } from "../auth/tokenStore";
 
 const users = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
+    withCredentials: true,
     timeout: 10000,
     headers: {
         "Content-Type" : "application/json",
@@ -10,7 +12,7 @@ const users = axios.create({
 
 users.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("access")
+        const token = getAccessToken();
 
         if(token) {
             config.headers.Authorization = `Bearer ${token}`
@@ -35,18 +37,13 @@ users.interceptors.response.use(
             originalRequest._retry = true;
 
             try{
-                const refresh = localStorage.getItem("refresh");
 
-                if(!refresh){
-                    throw new Error("No refresh token");
-                }
-
-                const res = await users.post("/token/refresh/", {
-                    refresh: refresh,
+                const res = await users.post("/token/refresh/", {}, {
+                    withCredentials: true
                 });
                 const newAccess = res.data.access;
 
-                localStorage.setItem("access", newAccess);
+                setAccessToken(newAccess);
 
                 originalRequest.headers.Authorization = `Bearer ${newAccess}`;
                 return users(originalRequest);

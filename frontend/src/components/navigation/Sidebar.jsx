@@ -1,13 +1,20 @@
+import { useContext } from "react";
 import { FaBook, FaBars } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
+import { AuthContext } from "../../auth/AuthProvider";
+import users from "../../api/users";
+import {jwtDecode} from "jwt-decode";
+import { getAccessToken, setAccessToken } from "../../auth/tokenStore";
 
 export default function Sidebar({ collapsed, toggleCollapse }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  
-  const username = localStorage.getItem("username");
-  const role = localStorage.getItem("role") || "worker";
+  const {setIsLoggedIn, setLoggedOut} = useContext(AuthContext)
+  const token = getAccessToken();
+  const decoded = jwtDecode(token);
+  const role = decoded.role || "worker";
+  const username = decoded.username || "Guest";
   
   const menuItems = {
     admin: [
@@ -21,10 +28,19 @@ export default function Sidebar({ collapsed, toggleCollapse }) {
     };
   
   let roleMenuItems = menuItems[role] || [];
-  const handleLogout = () => {
-    localStorage.clear();
+  const handleLogout = async () => {
 
-    window.location.href = "/login";
+    try{
+      await users.post("users/logout/", {
+        withCredentials: true,
+      });
+    }catch(err){
+      console.log("Logout failed", err);
+    }
+    
+    setIsLoggedIn(false);
+    setAccessToken(null);
+    navigate('/login', {replace: true})
   }
 
   return (

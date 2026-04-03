@@ -1,4 +1,4 @@
-odo Fullstack App
+Task Management Fullstack App
 
 A full-stack Todo application built with **Django REST Framework** and **React (Vite)** featuring role-based task assignment, approval workflow, and live search with autocomplete.
 
